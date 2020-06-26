@@ -1,20 +1,33 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.css";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import NavBar from "./views/NavBar/NavBar";
+import Mask from "./views/Mask/Mask";
+import Map from "./views/Map/Map";
+import styled from "styled-components";
+
+const Block = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+`;
 
 function App() {
-  useEffect(() => {
-    let container = document.getElementById("map");
-    let options = {
-      center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-      level: 3,
-    };
-
-    let map = new window.kakao.maps.Map(container, options);
-  }, []);
-
   return (
     <div className="App">
-      <div id="map" style={{ width: "500px", height: "400px" }}></div>
+      <Router>
+        <div style={{ display: "flex", flexFlow: "row wrap" }}>
+          <Block>
+            <NavBar />
+            <Map />
+          </Block>
+          <Block>
+            <Switch>
+              <Route exact path="/" component={Mask} />
+            </Switch>
+          </Block>
+        </div>
+      </Router>
     </div>
   );
 }
