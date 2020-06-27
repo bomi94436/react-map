@@ -2,8 +2,10 @@
 
 ### development environment
 
-- react 3.4.1
+- create-react-app 3.4.1
 - react-redux
+- react-thunk
+- immer
 - styled-component
 - [kakao map api](https://apis.map.kakao.com/)
 - vscode

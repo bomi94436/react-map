@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
-import { setAddress } from "modules/position";
+import { setAddress, getLatLng } from "modules/position";
 
-const SearchAddress = ({ address, setAddress }) => {
+const SearchAddress = ({ address, setAddress, getLatLng }) => {
   const sigu = require("utils/sigu.json");
   const sigudong = require("utils/sigudong.json");
 
@@ -13,6 +13,7 @@ const SearchAddress = ({ address, setAddress }) => {
         onChange={(event) =>
           setAddress({ name: "si", value: event.target.value })
         }
+        value={address.si}
       >
         <option value="">시도명</option>
         {sigu.map((i) => (
@@ -63,6 +64,10 @@ const SearchAddress = ({ address, setAddress }) => {
             }
           })}
       </select>
+
+      <button onClick={() => getLatLng(address.si, address.gu, address.dong)}>
+        Search
+      </button>
     </section>
   );
 };
@@ -73,5 +78,6 @@ export default connect(
   }),
   (dispatch) => ({
     setAddress: (data) => dispatch(setAddress(data)),
+    getLatLng: (si, gu, dong) => dispatch(getLatLng(si, gu, dong)),
   })
 )(SearchAddress);

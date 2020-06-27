@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 
 import usePromise from "utils/usePromise";
-import { getMaskURL } from "utils/url";
+import { getMaskURL } from "utils/api";
 import SearchAddress from "../SearchAddress/SearchAddress";
 
 // const MaskBlock = styled.div`
@@ -13,21 +13,21 @@ import SearchAddress from "../SearchAddress/SearchAddress";
 // `;
 
 const Mask = () => {
-  //   const [loading, response, error] = usePromise(() => {
-  //     return axios.get(getMaskURL(33.450701, 126.570667, 5000));
-  //   }, []);
+  // const [loading, response, error] = usePromise(() => {
+  //   return axios.get(getMaskURL(33.450701, 126.570667, 5000));
+  // }, []);
 
-  //   if (loading) {
-  //     return <div>로딩중 . . .</div>;
-  //   }
-  //   if (error) {
-  //     console.log(error);
-  //     return <div>error</div>;
-  //   }
-  //   if (!response) {
-  //     return null;
-  //   }
-  //   console.log(response);
+  // if (loading) {
+  //   return <div>로딩중 . . .</div>;
+  // }
+  // if (error) {
+  //   console.log(error);
+  //   return <div>error</div>;
+  // }
+  // if (!response) {
+  //   return null;
+  // }
+  // console.log(response);
 
   return (
     <div>

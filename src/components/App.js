@@ -9,7 +9,6 @@ import styled from "styled-components";
 const Block = styled.div`
   display: flex;
   flex-flow: column wrap;
-  justify-content: center;
 `;
 
 function App() {
