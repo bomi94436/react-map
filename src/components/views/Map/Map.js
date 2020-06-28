@@ -1,40 +1,37 @@
-/* global kakao */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { KakaoMap } from "react-kakao-maps";
+import { setMap } from "modules/position";
 
 const MapBlock = styled.div`
   width: 35rem;
   height: 35rem;
 `;
 
-const Map = ({ location, address }) => {
+const Map = ({ map, location, address, setMap }) => {
   useEffect(() => {
     let container = document.getElementById("map");
     let options = {
       center: new window.kakao.maps.LatLng(location.lat, location.lng),
       level: 4,
     };
-    let map = new window.kakao.maps.Map(container, options);
-  }, [location.lat, location.lng]);
+    (() => setMap({ container, options }))();
+  }, []);
 
   return (
     <div>
       <MapBlock id="map"></MapBlock>
-      {/* <KakaoMap
-        apiUrl={process.env.REACT_APP_KAKAO_MAP_KEY}
-        width="35rem"
-        height="35rem"
-        level={3}
-        lat={location.lat}
-        lng={location.lng}
-      ></KakaoMap> */}
     </div>
   );
 };
 
-export default connect(({ position }) => ({
-  location: position.location,
-  address: position.address,
-}))(Map);
+export default connect(
+  ({ position }) => ({
+    map: position.map,
+    location: position.location,
+    address: position.address,
+  }),
+  (dispatch) => ({
+    setMap: (data) => dispatch(setMap(data)),
+  })
+)(Map);

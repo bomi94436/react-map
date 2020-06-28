@@ -1,10 +1,10 @@
-/* global kakao */
 import { createAction, handleActions } from "redux-actions";
 import produce from "immer";
 import * as api from "utils/api";
 
 // action type definition
 const SET_ADDRESS = "position/SET_ADDRESS";
+const SET_MAP = "position/SET_MAP";
 
 const GET_LATLNG = "position/GET_LATLNG";
 const GET_LATLNG_SUCCESS = "position/GET_LATLNG_SUCCESS";
@@ -12,12 +12,19 @@ const GET_LATLNG_FAILURE = "position/GET_LATLNG_FAILURE";
 
 // action generator definition
 export const setAddress = createAction(SET_ADDRESS, (data) => data);
+export const setMap = createAction(SET_MAP, (data) => data);
 
 export const getLatLng = (si, gu, dong) => async (dispatch) => {
   dispatch({ type: GET_LATLNG });
   try {
     const response = await api.getLatLng(si, gu, dong);
-    dispatch({ type: GET_LATLNG_SUCCESS, payload: response });
+    dispatch({
+      type: GET_LATLNG_SUCCESS,
+      payload: {
+        lat: Number(response.data.documents[0].y),
+        lng: Number(response.data.documents[0].x),
+      },
+    });
   } catch (e) {
     dispatch({ type: GET_LATLNG_FAILURE, payload: e, error: true });
     throw e;
@@ -27,6 +34,7 @@ export const getLatLng = (si, gu, dong) => async (dispatch) => {
 // initial state
 const initState = {
   loading: { GET_LATLNG: false },
+  map: null,
   // 좌표
   location: { lat: 33.450701, lng: 126.570667 },
   // 주소
@@ -70,6 +78,14 @@ const position = handleActions(
       });
     },
 
+    [SET_MAP]: (state, action) =>
+      produce(state, (draft) => {
+        draft.map = new window.kakao.maps.Map(
+          action.payload.container,
+          action.payload.options
+        );
+      }),
+
     [GET_LATLNG]: (state) =>
       produce(state, (draft) => {
         draft.loading.GET_LATLNG = true;
@@ -79,6 +95,11 @@ const position = handleActions(
         draft.loading.GET_LATLNG = false;
         draft.location.lat = action.payload.lat;
         draft.location.lng = action.payload.lng;
+        let coords = new window.kakao.maps.LatLng(
+          action.payload.lat,
+          action.payload.lng
+        );
+        draft.map.setCenter(coords);
       }),
     [GET_LATLNG_FAILURE]: (state) =>
       produce(state, (draft) => {
