@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/react-map/static/css/main.50a3ed07.chunk.css",
+    "main.js": "/react-map/static/js/main.bf90c15e.chunk.js",
+    "main.js.map": "/react-map/static/js/main.bf90c15e.chunk.js.map",
+    "runtime-main.js": "/react-map/static/js/runtime-main.d015aa94.js",
+    "runtime-main.js.map": "/react-map/static/js/runtime-main.d015aa94.js.map",
+    "static/js/2.0563cb49.chunk.js": "/react-map/static/js/2.0563cb49.chunk.js",
+    "static/js/2.0563cb49.chunk.js.map": "/react-map/static/js/2.0563cb49.chunk.js.map",
+    "index.html": "/react-map/index.html",
+    "precache-manifest.cc3e924a7d3cbdbf9fb32ab1502daa2b.js": "/react-map/precache-manifest.cc3e924a7d3cbdbf9fb32ab1502daa2b.js",
+    "service-worker.js": "/react-map/service-worker.js",
+    "static/css/main.50a3ed07.chunk.css.map": "/react-map/static/css/main.50a3ed07.chunk.css.map",
+    "static/js/2.0563cb49.chunk.js.LICENSE.txt": "/react-map/static/js/2.0563cb49.chunk.js.LICENSE.txt",
+    "static/media/hospital.png": "/react-map/static/media/hospital.77bfab85.png",
+    "static/media/mask.png": "/react-map/static/media/mask.bd2cf6c1.png",
+    "static/media/pharmacy.png": "/react-map/static/media/pharmacy.b8759239.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d015aa94.js",
+    "static/js/2.0563cb49.chunk.js",
+    "static/css/main.50a3ed07.chunk.css",
+    "static/js/main.bf90c15e.chunk.js"
+  ]
+}

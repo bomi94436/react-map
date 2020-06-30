@@ -18,7 +18,7 @@ const Block = styled.div`
 function App() {
   return (
     <div className="App">
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <div style={{ display: "flex", flexFlow: "row wrap" }}>
           <Block style={{ marginRight: "5rem" }}>
             <NavBar />
