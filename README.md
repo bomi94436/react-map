@@ -8,10 +8,9 @@
 - immer
 - styled-component
 - [kakao map api](https://apis.map.kakao.com/)
-- vscode
-
-<br>
+- vscode <br>
 
 ### contents
 
-proceeding . . .
+Search for hospitals, pharmacies, and mask sales locations in Korea.
+You can test it [here](https://bomi94436.github.io/react-map/)!
