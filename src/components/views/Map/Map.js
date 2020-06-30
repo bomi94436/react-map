@@ -4,11 +4,12 @@ import { connect } from "react-redux";
 import { setMap } from "modules/position";
 
 const MapBlock = styled.div`
-  width: 35rem;
-  height: 35rem;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 0.5rem;
 `;
 
-const Map = ({ map, location, address, setMap }) => {
+const Map = ({ mode, location, setMap }) => {
   useEffect(() => {
     let container = document.getElementById("map");
     let options = {
@@ -16,10 +17,10 @@ const Map = ({ map, location, address, setMap }) => {
       level: 4,
     };
     (() => setMap({ container, options }))();
-  }, []);
+  }, [mode]);
 
   return (
-    <div>
+    <div style={{ display: "flex", justifyContent: "center" }}>
       <MapBlock id="map"></MapBlock>
     </div>
   );
@@ -27,9 +28,8 @@ const Map = ({ map, location, address, setMap }) => {
 
 export default connect(
   ({ position }) => ({
-    map: position.map,
+    mode: position.mode,
     location: position.location,
-    address: position.address,
   }),
   (dispatch) => ({
     setMap: (data) => dispatch(setMap(data)),

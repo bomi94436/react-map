@@ -17,9 +17,9 @@ export const getLatLng = (si, gu, dong) =>
   );
 
 // 병원(HP8), 약국(PM9) 검색
-export const getPlace = (code, lat, lng, radius, query) =>
+export const getPlace = (code, lat, lng, query) =>
   axios.get(
-    `https://dapi.kakao.com/v2/local/search/keyword.json?category_group_code=${code}&y=${lat}&x=${lng}&radius=${radius}&query=${query}`,
+    `https://dapi.kakao.com/v2/local/search/keyword.json?category_group_code=${code}&y=${lat}&x=${lng}&radius=2000&query=${query}`,
     {
       headers: {
         Authorization: `KakaoAK ${KAKAO_MAP_REST_API_KEY}`,

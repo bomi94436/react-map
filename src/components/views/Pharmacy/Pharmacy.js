@@ -1,11 +1,22 @@
+/* global kakao */
 import React from "react";
 import usePromise from "utils/usePromise";
 import { getPlace } from "utils/api";
 import { connect } from "react-redux";
+import { ListCover, List, ListItem } from "components/views/styles/ListStyle";
+import { setCenterListClick, updateMap, updateMode } from "modules/position";
+import icons from "utils/importIcons";
 
-const Pharmacy = ({ location }) => {
+const Pharmacy = ({
+  location,
+  map,
+  setCenterListClick,
+  updateMap,
+  updateMode,
+}) => {
   const [loading, response, error] = usePromise(() => {
-    return getPlace("PM9", location.lat, location.lng, 3000, "약국");
+    (() => updateMode({ mode: "PHARMACY" }))();
+    return getPlace("PM9", location.lat, location.lng, "약국");
   }, [location]);
 
   if (loading) {
@@ -19,11 +30,66 @@ const Pharmacy = ({ location }) => {
     return null;
   }
 
-  //   const items = response.data.stores;
-  console.log(response);
-  return <div>약국 검색</div>;
+  const items = response.data.documents;
+  const icon = new window.kakao.maps.MarkerImage(
+    icons.pharmacyIcon,
+    new window.kakao.maps.Size(40, 48)
+  );
+
+  return (
+    <ListCover>
+      <span>약국 검색</span>
+      <List>
+        {items.map((item) => {
+          const marker = new window.kakao.maps.Marker({
+            map: map,
+            position: new window.kakao.maps.LatLng(item.y, item.x),
+            clickable: true,
+            image: icon,
+          });
+          marker.setMap(map);
+          (() => updateMap({ map: marker.getMap() }))();
+
+          const iwContent =
+            '<div style="padding:5px; fontSize: 0.5rem">' +
+            item.place_name +
+            "</div>";
+          const infowindow = new kakao.maps.InfoWindow({
+            content: iwContent,
+          });
+
+          kakao.maps.event.addListener(marker, "mouseover", function () {
+            infowindow.open(map, marker);
+          });
+
+          kakao.maps.event.addListener(marker, "mouseout", function () {
+            infowindow.close();
+          });
+
+          return (
+            <ListItem
+              key={item.id}
+              onClick={() => setCenterListClick({ y: item.y, x: item.x })}
+            >
+              <h3>{item.place_name}</h3>
+              <p>{item.road_address_name}</p>
+              <p>{item.category_name}</p>
+            </ListItem>
+          );
+        })}
+      </List>
+    </ListCover>
+  );
 };
 
-export default connect(({ position }) => ({
-  location: position.location,
-}))(Pharmacy);
+export default connect(
+  ({ position }) => ({
+    location: position.location,
+    map: position.map,
+  }),
+  (dispatch) => ({
+    setCenterListClick: (data) => dispatch(setCenterListClick(data)),
+    updateMap: (data) => dispatch(updateMap(data)),
+    updateMode: (data) => dispatch(updateMode(data)),
+  })
+)(Pharmacy);

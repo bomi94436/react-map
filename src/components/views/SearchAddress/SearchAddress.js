@@ -1,13 +1,38 @@
 import React from "react";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import { setAddress, getLatLng } from "modules/position";
+import { GoSearch } from "react-icons/go";
+import { AiFillDownCircle } from "react-icons/ai";
+import { green } from "../styles/color";
+
+const DropDown = styled.div`
+  select {
+    color: gray;
+    margin: 2rem 0rem;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 0.7rem;
+    font-size: 1rem;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+  }
+  button {
+    font-size: 1rem;
+    padding: 0.5rem 0.7rem;
+    border: none;
+    background: ${green};
+    cursor: pointer;
+  }
+`;
 
 const SearchAddress = ({ address, setAddress, getLatLng }) => {
   const sigu = require("utils/sigu.json");
   const sigudong = require("utils/sigudong.json");
 
   return (
-    <section>
+    <DropDown>
       <select
         name="si"
         onChange={(event) =>
@@ -28,6 +53,7 @@ const SearchAddress = ({ address, setAddress, getLatLng }) => {
         onChange={(event) =>
           setAddress({ name: "gu", value: event.target.value })
         }
+        value={address.gu}
       >
         <option value="">시군구명</option>
         {address.si !== null &&
@@ -47,6 +73,7 @@ const SearchAddress = ({ address, setAddress, getLatLng }) => {
         onChange={(event) =>
           setAddress({ name: "dong", value: event.target.value })
         }
+        value={address.dong}
       >
         <option value="">읍면동명</option>
         {address.gu !== null &&
@@ -66,9 +93,9 @@ const SearchAddress = ({ address, setAddress, getLatLng }) => {
       </select>
 
       <button onClick={() => getLatLng(address.si, address.gu, address.dong)}>
-        Search
+        <GoSearch color="#ffffff" />
       </button>
-    </section>
+    </DropDown>
   );
 };
 

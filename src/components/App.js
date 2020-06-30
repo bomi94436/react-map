@@ -12,6 +12,7 @@ import Pharmacy from "./views/Pharmacy/Pharmacy";
 const Block = styled.div`
   display: flex;
   flex-flow: column wrap;
+  justify-content: center;
 `;
 
 function App() {
@@ -19,12 +20,12 @@ function App() {
     <div className="App">
       <Router>
         <div style={{ display: "flex", flexFlow: "row wrap" }}>
-          <Block>
+          <Block style={{ marginRight: "5rem" }}>
             <NavBar />
+            <SearchAddress />
             <Map />
           </Block>
           <Block>
-            <SearchAddress />
             <Switch>
               <Route exact path="/" component={Mask} />
               <Route path="/hospital" component={Hospital} />
