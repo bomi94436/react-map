@@ -2,12 +2,12 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NavBar from "./views/NavBar/NavBar";
-import Mask from "./views/Mask/Mask";
+import Mask from "./views/Places/Mask/Mask";
 import Map from "./views/Map/Map";
 import styled from "styled-components";
 import SearchAddress from "./views/SearchAddress/SearchAddress";
-import Hospital from "./views/Hospital/Hospital";
-import Pharmacy from "./views/Pharmacy/Pharmacy";
+import Hospital from "./views/Places/Hospital/Hospital";
+import Pharmacy from "./views/Places/Pharmacy/Pharmacy";
 
 const Block = styled.div`
   display: flex;

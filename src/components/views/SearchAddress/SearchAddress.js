@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { setAddress, getLatLng } from "modules/position";
 import { GoSearch } from "react-icons/go";
-import { AiFillDownCircle } from "react-icons/ai";
 import { green } from "../styles/color";
 
 const DropDown = styled.div`

@@ -1,0 +1,29 @@
+.markerInfo {
+  width: 100%;
+  height: 100%;
+  padding: 0.3rem;
+  border-radius: 0.3rem;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  background-color: white;
+  color: gray;
+  font-weight: 700;
+}
+
+span {
+  font-weight: 400;
+}
+
+.plenty {
+  color: #038c5a;
+}
+.some {
+  color: #eac351;
+}
+.few {
+  color: #a81c1a;
+}
+.empty {
+  color: black;
+}

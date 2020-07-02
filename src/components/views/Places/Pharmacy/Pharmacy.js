@@ -1,13 +1,14 @@
 /* global kakao */
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import usePromise from "utils/usePromise";
 import { getPlace } from "utils/api";
 import { connect } from "react-redux";
-import { ListCover, List, ListItem } from "components/views/styles/ListStyle";
+import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
 import { setCenterListClick, updateMap, updateMode } from "modules/position";
 import icons from "utils/importIcons";
+import { setMarkerInfo } from "../placeUtils";
 
-const Hospital = ({
+const Pharmacy = ({
   location,
   map,
   setCenterListClick,
@@ -15,8 +16,8 @@ const Hospital = ({
   updateMode,
 }) => {
   const [loading, response, error] = usePromise(() => {
-    (() => updateMode({ mode: "HOSPITAL" }))();
-    return getPlace("HP8", location.lat, location.lng, "병원");
+    (() => updateMode({ mode: "PHARMACY" }))();
+    return getPlace("PM9", location.lat, location.lng, "약국");
   }, [location]);
 
   if (loading) {
@@ -32,13 +33,13 @@ const Hospital = ({
 
   const items = response.data.documents;
   const icon = new window.kakao.maps.MarkerImage(
-    icons.hospitalIcon,
+    icons.pharmacyIcon,
     new window.kakao.maps.Size(40, 48)
   );
 
   return (
     <ListCover>
-      <span>병원 검색</span>
+      <span>약국 검색</span>
       <List>
         {items.map((item) => {
           const marker = new window.kakao.maps.Marker({
@@ -50,21 +51,7 @@ const Hospital = ({
           marker.setMap(map);
           (() => updateMap({ map: marker.getMap() }))();
 
-          const iwContent =
-            '<div style="padding:5px; fontSize: 0.5rem">' +
-            item.place_name +
-            "</div>";
-          const infowindow = new kakao.maps.InfoWindow({
-            content: iwContent,
-          });
-
-          kakao.maps.event.addListener(marker, "mouseover", function () {
-            infowindow.open(map, marker);
-          });
-
-          kakao.maps.event.addListener(marker, "mouseout", function () {
-            infowindow.close();
-          });
+          setMarkerInfo("pharmacy", item, marker, map);
 
           return (
             <ListItem
@@ -92,4 +79,4 @@ export default connect(
     updateMap: (data) => dispatch(updateMap(data)),
     updateMode: (data) => dispatch(updateMode(data)),
   })
-)(Hospital);
+)(Pharmacy);

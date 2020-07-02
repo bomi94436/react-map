@@ -1,22 +1,18 @@
 /* global kakao */
 import React from "react";
-import usePromise from "utils/usePromise";
-import { getPlace } from "utils/api";
 import { connect } from "react-redux";
-import { ListCover, List, ListItem } from "components/views/styles/ListStyle";
+import usePromise from "utils/usePromise";
+import { getMask } from "utils/api";
+import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
 import { setCenterListClick, updateMap, updateMode } from "modules/position";
 import icons from "utils/importIcons";
+import "../Places.css";
+import { setMarkerInfo, getMaskCount } from "../placeUtils";
 
-const Pharmacy = ({
-  location,
-  map,
-  setCenterListClick,
-  updateMap,
-  updateMode,
-}) => {
+const Mask = ({ location, map, setCenterListClick, updateMap, updateMode }) => {
   const [loading, response, error] = usePromise(() => {
-    (() => updateMode({ mode: "PHARMACY" }))();
-    return getPlace("PM9", location.lat, location.lng, "약국");
+    (() => updateMode({ mode: "MASK" }))();
+    return getMask(location.lat, location.lng, 2000);
   }, [location]);
 
   if (loading) {
@@ -30,50 +26,41 @@ const Pharmacy = ({
     return null;
   }
 
-  const items = response.data.documents;
+  const items = response.data.stores;
   const icon = new window.kakao.maps.MarkerImage(
-    icons.pharmacyIcon,
+    icons.maskIcon,
     new window.kakao.maps.Size(40, 48)
   );
 
   return (
     <ListCover>
-      <span>약국 검색</span>
+      <span>마스크 판매처 검색</span>
       <List>
         {items.map((item) => {
           const marker = new window.kakao.maps.Marker({
             map: map,
-            position: new window.kakao.maps.LatLng(item.y, item.x),
+            position: new window.kakao.maps.LatLng(item.lat, item.lng),
             clickable: true,
             image: icon,
           });
           marker.setMap(map);
           (() => updateMap({ map: marker.getMap() }))();
 
-          const iwContent =
-            '<div style="padding:5px; fontSize: 0.5rem">' +
-            item.place_name +
-            "</div>";
-          const infowindow = new kakao.maps.InfoWindow({
-            content: iwContent,
-          });
-
-          kakao.maps.event.addListener(marker, "mouseover", function () {
-            infowindow.open(map, marker);
-          });
-
-          kakao.maps.event.addListener(marker, "mouseout", function () {
-            infowindow.close();
-          });
+          setMarkerInfo("mask", item, marker, map);
 
           return (
             <ListItem
-              key={item.id}
-              onClick={() => setCenterListClick({ y: item.y, x: item.x })}
+              key={item.code}
+              onClick={() => setCenterListClick({ y: item.lat, x: item.lng })}
+              textColor={item.remain_stat}
             >
-              <h3>{item.place_name}</h3>
-              <p>{item.road_address_name}</p>
-              <p>{item.category_name}</p>
+              <h3>{item.name}</h3>
+              <h5 style={{ margin: "0.2rem" }}>
+                {getMaskCount(item.remain_stat)}
+              </h5>
+              <p>{item.addr}</p>
+              <p>데이터 생성일: {item.created_at}</p>
+              <p>입고시간: {item.stock_at}</p>
             </ListItem>
           );
         })}
@@ -92,4 +79,4 @@ export default connect(
     updateMap: (data) => dispatch(updateMap(data)),
     updateMode: (data) => dispatch(updateMode(data)),
   })
-)(Pharmacy);
+)(Mask);
