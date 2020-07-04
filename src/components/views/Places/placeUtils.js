@@ -1,8 +1,9 @@
 /* global kakao */
-export const setMarkerInfo = (place, item, marker, map) => {
+export const setMarkerInfo = (mode, item, marker, map) => {
   const content = document.createElement("div");
+  const id = mode === "MASK" ? item.code : item.id;
 
-  place === "mask"
+  mode === "MASK"
     ? (content.innerHTML =
         item.name +
         "<br/><span class=" +
@@ -17,8 +18,8 @@ export const setMarkerInfo = (place, item, marker, map) => {
   let activeId = null;
   let timeoutId = null;
 
-  const lat = place === "mask" ? item.lat : item.y;
-  const lng = place === "mask" ? item.lng : item.x;
+  const lat = mode === "MASK" ? item.lat : item.y;
+  const lng = mode === "MASK" ? item.lng : item.x;
 
   const position = new kakao.maps.LatLng(lat, lng);
   const customOverlay = new kakao.maps.CustomOverlay({
@@ -31,17 +32,13 @@ export const setMarkerInfo = (place, item, marker, map) => {
   customOverlay.setMap();
 
   const mouseOverHandler = () => {
-    if (
-      timeoutId !== null &&
-      (place === "mask" ? item.code : item.id) === activeId
-    ) {
-      //
+    if (timeoutId !== null && id === activeId) {
       window.clearTimeout(timeoutId);
       timeoutId = null;
       return;
     }
     customOverlay.setMap(map);
-    activeId = place === "mask" ? item.code : item.id;
+    activeId = id;
   };
 
   const mouseOutHandler = () => {
@@ -49,7 +46,7 @@ export const setMarkerInfo = (place, item, marker, map) => {
       customOverlay.setMap(null);
       activeId = null;
       timeoutId = null;
-    }, 50);
+    }, 25);
   };
 
   kakao.maps.event.addListener(marker, "mouseover", mouseOverHandler);
@@ -71,4 +68,19 @@ export const getMaskCount = (remain_stat) => {
     default:
       return "X";
   }
+};
+
+export const getMarker = (map, y, x, iconImg) => {
+  const position = new window.kakao.maps.LatLng(y, x);
+  const icon = new window.kakao.maps.MarkerImage(
+    iconImg,
+    new window.kakao.maps.Size(40, 48)
+  );
+
+  return new window.kakao.maps.Marker({
+    map: map,
+    position: position,
+    clickable: true,
+    image: icon,
+  });
 };

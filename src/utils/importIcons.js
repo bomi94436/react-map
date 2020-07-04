@@ -1,5 +1,6 @@
-import maskIcon from "icons/mask.png";
-import hospitalIcon from "icons/hospital.png";
-import pharmacyIcon from "icons/pharmacy.png";
+import mask from "icons/mask.png";
+import hospital from "icons/hospital.png";
+import pharmacy from "icons/pharmacy.png";
+import curr_mask from "icons/curr_mask.png";
 
-export default { maskIcon, hospitalIcon, pharmacyIcon };
+export default { mask, hospital, pharmacy, curr_mask };

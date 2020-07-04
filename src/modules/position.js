@@ -1,11 +1,15 @@
+/* global kakao */
 import { createAction, handleActions } from "redux-actions";
 import produce from "immer";
 import * as api from "utils/api";
+import icons from "utils/importIcons";
+import { getMarker, setMarkerInfo } from "components/views/Places/placeUtils";
 
 // action type definition
 const SET_ADDRESS = "position/SET_ADDRESS";
 const SET_MAP = "position/SET_MAP";
 const SET_MARKER = "position/SET_MARKER";
+const SET_CURR_MARKER = "position/SET_CURR_MARKER";
 const SET_CENTER_LIST_CLICK = "position/SET_CENTER_LIST_CLICK";
 
 const UPDATE_MAP = "position/UPDATE_MAP";
@@ -15,10 +19,15 @@ const GET_LATLNG = "position/GET_LATLNG";
 const GET_LATLNG_SUCCESS = "position/GET_LATLNG_SUCCESS";
 const GET_LATLNG_FAILURE = "position/GET_LATLNG_FAILURE";
 
+const GET_PLACE = "position/GET_PLACE";
+const GET_PLACE_SUCCESS = "position/GET_PLACE_SUCCESS";
+const GET_PLACE_FAILURE = "position/GET_PLACE_FAILURE";
+
 // action generator definition
 export const setAddress = createAction(SET_ADDRESS, (data) => data);
 export const setMap = createAction(SET_MAP, (data) => data);
 export const setMarker = createAction(SET_MARKER, (data) => data);
+export const setCurrMarker = createAction(SET_CURR_MARKER, (data) => data);
 export const setCenterListClick = createAction(
   SET_CENTER_LIST_CLICK,
   (data) => data
@@ -44,18 +53,53 @@ export const getLatLng = (si, gu, dong) => async (dispatch) => {
   }
 };
 
+export const getPlaces = (mode, lat, lng, option) => async (dispatch) => {
+  dispatch({ type: GET_PLACE });
+  try {
+    let response, items;
+
+    if (mode === "MASK") {
+      response = await api.getMask(lat, lng, option);
+      items = response.data.stores;
+    } else {
+      response = await api.getPlace(lat, lng, option);
+      items = response.data.documents;
+    }
+    dispatch({
+      type: GET_PLACE_SUCCESS,
+      payload: {
+        items: items,
+      },
+    });
+  } catch (e) {
+    dispatch({ type: GET_PLACE_FAILURE, payload: e, error: true });
+    throw e;
+  }
+};
+
 // initial state
 const initState = {
   mode: "PHARMACY",
-  loading: { GET_LATLNG: false },
+  loading: { GET_LATLNG: false, GET_PLACE: false },
+
   map: null,
   location: { lat: 35.1798200522868, lng: 129.075087492149 },
   address: { si: "부산광역시", gu: "", dong: "", detail: "" },
+
+  items: null,
+  marker: {
+    currMarker: {
+      id: null,
+      y: null,
+      x: null,
+      item: null,
+    },
+    markerList: [],
+  },
 };
 
 const position = handleActions(
   {
-    // [INCREASE]: (state) => ({ ...state, number: state.number + 1 }),
     [SET_ADDRESS]: (state, action) => {
       const name = action.payload.name;
       const value = action.payload.value;
@@ -108,11 +152,55 @@ const position = handleActions(
 
     [SET_MARKER]: (state, action) =>
       produce(state, (draft) => {
-        draft.marker.push({
+        const item = action.payload.item;
+        const marker = action.payload.marker;
+
+        marker.setMap(draft.map);
+        draft.map = marker.getMap();
+
+        draft.marker.markerList.push({
+          id: action.payload.id,
+          marker: marker,
+        });
+        setMarkerInfo(draft.mode, item, marker, draft.map);
+      }),
+
+    [SET_CURR_MARKER]: (state, action) =>
+      produce(state, (draft) => {
+        const curr = draft.marker.currMarker;
+        const newCurr = {
           id: action.payload.id,
           y: action.payload.y,
           x: action.payload.x,
+          item: action.payload.item,
+        };
+
+        draft.marker.markerList.map((i) => {
+          if (curr.id && i.id === curr.id) {
+            i.marker.setMap(null);
+            i.marker = getMarker(draft.map, curr.y, curr.x, icons.mask);
+            i.marker.setMap(draft.map);
+            draft.map = i.marker.getMap();
+            setMarkerInfo(draft.mode, curr.item, i.marker, draft.map);
+          }
+          if (i.id === newCurr.id) {
+            i.marker.setMap(null);
+            i.marker = getMarker(
+              draft.map,
+              newCurr.y,
+              newCurr.x,
+              icons.curr_mask
+            );
+            i.marker.setMap(draft.map);
+            draft.map = i.marker.getMap();
+            setMarkerInfo(draft.mode, newCurr.item, i.marker, draft.map);
+          }
         });
+
+        draft.marker.currMarker.id = newCurr.id;
+        draft.marker.currMarker.y = newCurr.y;
+        draft.marker.currMarker.x = newCurr.x;
+        draft.marker.currMarker.item = newCurr.item;
       }),
 
     [SET_CENTER_LIST_CLICK]: (state, action) =>
@@ -132,6 +220,8 @@ const position = handleActions(
     [UPDATE_MODE]: (state, action) =>
       produce(state, (draft) => {
         draft.mode = action.payload.mode;
+        // draft.marker.currMarker = null;
+        draft.marker.markerList = [];
       }),
 
     [GET_LATLNG]: (state) =>
@@ -152,6 +242,20 @@ const position = handleActions(
     [GET_LATLNG_FAILURE]: (state) =>
       produce(state, (draft) => {
         draft.loading.GET_LATLNG = false;
+      }),
+
+    [GET_PLACE]: (state) =>
+      produce(state, (draft) => {
+        draft.loading.GET_PLACE = true;
+      }),
+    [GET_PLACE_SUCCESS]: (state, action) =>
+      produce(state, (draft) => {
+        draft.loading.GET_PLACE = false;
+        draft.items = action.payload.items;
+      }),
+    [GET_PLACE_FAILURE]: (state) =>
+      produce(state, (draft) => {
+        draft.loading.GET_PLACE = false;
       }),
   },
   initState

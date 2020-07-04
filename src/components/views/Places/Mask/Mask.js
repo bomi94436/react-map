@@ -1,57 +1,71 @@
 /* global kakao */
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import usePromise from "utils/usePromise";
-import { getMask } from "utils/api";
 import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
-import { setCenterListClick, updateMap, updateMode } from "modules/position";
+import {
+  setCenterListClick,
+  updateMode,
+  setMarker,
+  setCurrMarker,
+  getPlaces,
+} from "modules/position";
 import icons from "utils/importIcons";
 import "../Places.css";
-import { setMarkerInfo, getMaskCount } from "../placeUtils";
+import { getMaskCount, getMarker } from "../placeUtils";
 
-const Mask = ({ location, map, setCenterListClick, updateMap, updateMode }) => {
-  const [loading, response, error] = usePromise(() => {
-    (() => updateMode({ mode: "MASK" }))();
-    return getMask(location.lat, location.lng, 2000);
+const Mask = ({
+  items,
+  loading,
+  location,
+  map,
+
+  getPlaces,
+  updateMode,
+  setCenterListClick,
+  setCurrMarker,
+  setMarker,
+}) => {
+  useEffect(() => {
+    updateMode({ mode: "MASK" });
+    getPlaces("MASK", location.lat, location.lng, 2000);
   }, [location]);
 
   if (loading) {
     return <div>로딩중 . . .</div>;
   }
-  if (error) {
-    console.log(error);
+  // if (error) {
+  //   console.log(error);
+  //   return <div>error</div>;
+  // }
+  if (!items) {
     return <div>error</div>;
   }
-  if (!response) {
-    return null;
-  }
 
-  const items = response.data.stores;
-  const icon = new window.kakao.maps.MarkerImage(
-    icons.maskIcon,
-    new window.kakao.maps.Size(40, 48)
-  );
+  if (items) {
+    items.map((item) => {
+      const marker = getMarker(map, item.lat, item.lng, icons.mask);
+      setMarker({ id: item.code, marker: marker, item: item });
+    });
+  }
 
   return (
     <ListCover>
       <span>마스크 판매처 검색</span>
       <List>
         {items.map((item) => {
-          const marker = new window.kakao.maps.Marker({
-            map: map,
-            position: new window.kakao.maps.LatLng(item.lat, item.lng),
-            clickable: true,
-            image: icon,
-          });
-          marker.setMap(map);
-          (() => updateMap({ map: marker.getMap() }))();
-
-          setMarkerInfo("mask", item, marker, map);
-
           return (
             <ListItem
               key={item.code}
-              onClick={() => setCenterListClick({ y: item.lat, x: item.lng })}
+              onClick={() => {
+                setCenterListClick({ y: item.lat, x: item.lng });
+                setCurrMarker({
+                  id: item.code,
+                  y: item.lat,
+                  x: item.lng,
+                  item: item,
+                });
+              }}
               textColor={item.remain_stat}
             >
               <h3>{item.name}</h3>
@@ -71,12 +85,17 @@ const Mask = ({ location, map, setCenterListClick, updateMap, updateMode }) => {
 
 export default connect(
   ({ position }) => ({
+    items: position.items,
+    loading: position.loading.GET_PLACE,
     location: position.location,
     map: position.map,
   }),
   (dispatch) => ({
-    setCenterListClick: (data) => dispatch(setCenterListClick(data)),
-    updateMap: (data) => dispatch(updateMap(data)),
+    getPlaces: (mode, lat, lng, meter) =>
+      dispatch(getPlaces(mode, lat, lng, meter)),
     updateMode: (data) => dispatch(updateMode(data)),
+    setCenterListClick: (data) => dispatch(setCenterListClick(data)),
+    setCurrMarker: (data) => dispatch(setCurrMarker(data)),
+    setMarker: (data) => dispatch(setMarker(data)),
   })
 )(Mask);

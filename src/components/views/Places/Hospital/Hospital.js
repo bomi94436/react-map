@@ -17,7 +17,7 @@ const Hospital = ({
 }) => {
   const [loading, response, error] = usePromise(() => {
     (() => updateMode({ mode: "HOSPITAL" }))();
-    return getPlace("HP8", location.lat, location.lng, "병원");
+    return getPlace(location.lat, location.lng, "HP8");
   }, [location]);
 
   if (loading) {
@@ -33,7 +33,7 @@ const Hospital = ({
 
   const items = response.data.documents;
   const icon = new window.kakao.maps.MarkerImage(
-    icons.hospitalIcon,
+    icons.hospital,
     new window.kakao.maps.Size(40, 48)
   );
 
