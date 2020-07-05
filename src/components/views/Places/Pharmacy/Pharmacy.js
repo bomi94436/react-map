@@ -1,11 +1,8 @@
-/* global kakao */
 import React, { useEffect } from "react";
-import usePromise from "utils/usePromise";
 import { connect } from "react-redux";
 import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
 import {
   setCenterListClick,
-  updateMap,
   updateMode,
   setMarker,
   setCurrMarker,
@@ -28,22 +25,18 @@ const Pharmacy = ({
 }) => {
   useEffect(() => {
     updateMode({ mode: "PHARMACY" });
-    return getPlaces("PHARMACY", location.lat, location.lng, "PM9");
-  }, [location]);
+    getPlaces("PHARMACY", location.lat, location.lng, "PM9");
+  }, [location.lat, location.lng, updateMode, getPlaces]);
 
   if (loading) {
     return <div>로딩중 . . .</div>;
   }
-  // if (error) {
-  //   console.log(error);
-  //   return <div>error</div>;
-  // }
   if (!items) {
     return <div>error</div>;
   }
 
   if (items) {
-    items.map((item) => {
+    items.forEach((item) => {
       const marker = getMarker(map, item.y, item.x, icons.pharmacy);
       setMarker({ id: item.id, marker: marker, item: item });
     });
@@ -53,10 +46,10 @@ const Pharmacy = ({
     <ListCover>
       <span>약국 검색</span>
       <List>
-        {items.map((item) => {
+        {items.map((item, index) => {
           return (
             <ListItem
-              key={item.id}
+              key={index}
               onClick={() => {
                 setCenterListClick({ y: item.y, x: item.x });
                 setCurrMarker({

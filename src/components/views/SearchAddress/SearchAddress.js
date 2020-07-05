@@ -76,19 +76,13 @@ const SearchAddress = ({ address, setAddress, getLatLng }) => {
       >
         <option value="">읍면동명</option>
         {address.gu !== null &&
-          sigudong.map((element) => {
-            if (
-              element.si === address.si &&
-              element.gu === address.gu &&
-              element.dong
-            ) {
-              return (
-                <option key={element.dong} value={element.dong}>
-                  {element.dong}
-                </option>
-              );
-            }
-          })}
+          sigudong
+            .filter((i) => i.si === address.si && i.gu === address.gu && i.dong)
+            .map((i) => (
+              <option key={i.dong} value={i.dong}>
+                {i.dong}
+              </option>
+            ))}
       </select>
 
       <button onClick={() => getLatLng(address.si, address.gu, address.dong)}>

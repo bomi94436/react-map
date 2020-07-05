@@ -39,6 +39,7 @@ export const setMarkerInfo = (mode, item, marker, map) => {
     }
     customOverlay.setMap(map);
     activeId = id;
+    // this.removeEventListener("mouseover", arguments.callee);
   };
 
   const mouseOutHandler = () => {
@@ -54,6 +55,11 @@ export const setMarkerInfo = (mode, item, marker, map) => {
   content.addEventListener("mouseover", mouseOverHandler);
   content.addEventListener("mouseout", mouseOutHandler);
 };
+
+// export const removeMarkerInfo = (marker) => {
+//   kakao.maps.event.removeListener(marker, "mouseover");
+//   kakao.maps.event.addListener(marker, "mouseout", mouseOutHandler);
+// }
 
 export const getMaskCount = (remain_stat) => {
   switch (remain_stat) {

@@ -1,7 +1,5 @@
-/* global kakao */
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import usePromise from "utils/usePromise";
 import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
 import {
   setCenterListClick,
@@ -29,21 +27,17 @@ const Mask = ({
   useEffect(() => {
     updateMode({ mode: "MASK" });
     getPlaces("MASK", location.lat, location.lng, 2000);
-  }, [location]);
+  }, [location.lat, location.lng, updateMode, getPlaces]);
 
   if (loading) {
     return <div>로딩중 . . .</div>;
   }
-  // if (error) {
-  //   console.log(error);
-  //   return <div>error</div>;
-  // }
   if (!items) {
     return <div>error</div>;
   }
 
   if (items) {
-    items.map((item) => {
+    items.forEach((item) => {
       const marker = getMarker(map, item.lat, item.lng, icons.mask);
       setMarker({ id: item.code, marker: marker, item: item });
     });
@@ -52,11 +46,11 @@ const Mask = ({
   return (
     <ListCover>
       <span>마스크 판매처 검색</span>
-      <List>
-        {items.map((item) => {
+      <List key={"MASK"}>
+        {items.map((item, index) => {
           return (
             <ListItem
-              key={item.code}
+              key={index}
               onClick={() => {
                 setCenterListClick({ y: item.lat, x: item.lng });
                 setCurrMarker({

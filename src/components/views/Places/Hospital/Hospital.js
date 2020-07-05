@@ -1,62 +1,63 @@
-/* global kakao */
-import React, { useEffect, useMemo } from "react";
-import usePromise from "utils/usePromise";
-import { getPlace } from "utils/api";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
-import { setCenterListClick, updateMap, updateMode } from "modules/position";
+import {
+  setCenterListClick,
+  updateMode,
+  setMarker,
+  setCurrMarker,
+  getPlaces,
+} from "modules/position";
 import icons from "utils/importIcons";
-import { setMarkerInfo } from "../placeUtils";
+import { getMarker } from "../placeUtils";
 
 const Hospital = ({
+  items,
+  loading,
   location,
   map,
-  setCenterListClick,
-  updateMap,
+
+  getPlaces,
   updateMode,
+  setCenterListClick,
+  setCurrMarker,
+  setMarker,
 }) => {
-  const [loading, response, error] = usePromise(() => {
-    (() => updateMode({ mode: "HOSPITAL" }))();
-    return getPlace(location.lat, location.lng, "HP8");
-  }, [location]);
+  useEffect(() => {
+    updateMode({ mode: "HOSPITAL" });
+    getPlaces("HOSPITAL", location.lat, location.lng, "HP8");
+  }, [location.lat, location.lng, updateMode, getPlaces]);
 
   if (loading) {
     return <div>로딩중 . . .</div>;
   }
-  if (error) {
-    console.log(error);
+  if (!items) {
     return <div>error</div>;
   }
-  if (!response) {
-    return null;
+
+  if (items) {
+    items.forEach((item) => {
+      const marker = getMarker(map, item.y, item.x, icons.hospital);
+      setMarker({ id: item.id, marker: marker, item: item });
+    });
   }
-
-  const items = response.data.documents;
-  const icon = new window.kakao.maps.MarkerImage(
-    icons.hospital,
-    new window.kakao.maps.Size(40, 48)
-  );
-
   return (
     <ListCover>
       <span>병원 검색</span>
       <List>
-        {items.map((item) => {
-          const marker = new window.kakao.maps.Marker({
-            map: map,
-            position: new window.kakao.maps.LatLng(item.y, item.x),
-            clickable: true,
-            image: icon,
-          });
-          marker.setMap(map);
-          (() => updateMap({ map: marker.getMap() }))();
-
-          setMarkerInfo("hospital", item, marker, map);
-
+        {items.map((item, index) => {
           return (
             <ListItem
-              key={item.id}
-              onClick={() => setCenterListClick({ y: item.y, x: item.x })}
+              key={index}
+              onClick={() => {
+                setCenterListClick({ y: item.y, x: item.x });
+                setCurrMarker({
+                  id: item.id,
+                  y: item.y,
+                  x: item.x,
+                  item: item,
+                });
+              }}
             >
               <h3>{item.place_name}</h3>
               <p>{item.road_address_name}</p>
@@ -71,12 +72,17 @@ const Hospital = ({
 
 export default connect(
   ({ position }) => ({
+    items: position.items,
+    loading: position.loading.GET_PLACE,
     location: position.location,
     map: position.map,
   }),
   (dispatch) => ({
-    setCenterListClick: (data) => dispatch(setCenterListClick(data)),
-    updateMap: (data) => dispatch(updateMap(data)),
+    getPlaces: (mode, lat, lng, meter) =>
+      dispatch(getPlaces(mode, lat, lng, meter)),
     updateMode: (data) => dispatch(updateMode(data)),
+    setCenterListClick: (data) => dispatch(setCenterListClick(data)),
+    setCurrMarker: (data) => dispatch(setCurrMarker(data)),
+    setMarker: (data) => dispatch(setMarker(data)),
   })
 )(Hospital);

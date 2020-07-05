@@ -1,4 +1,3 @@
-/* global kakao */
 import { createAction, handleActions } from "redux-actions";
 import produce from "immer";
 import * as api from "utils/api";
@@ -107,32 +106,26 @@ const position = handleActions(
       switch (name) {
         case "si":
           return produce(state, (draft) => {
-            if (value === "") {
-              draft.address.si = "";
-            } else {
-              draft.address[name] = value;
-            }
+            if (value === "") draft.address.si = "";
+            else draft.address[name] = value;
+
             draft.address.gu = "";
             draft.address.dong = "";
             draft.address.detail = "";
           });
         case "gu":
           return produce(state, (draft) => {
-            if (value === "") {
-              draft.address.gu = "";
-            } else {
-              draft.address[name] = value;
-            }
+            if (value === "") draft.address.gu = "";
+            else draft.address[name] = value;
+
             draft.address.dong = "";
             draft.address.detail = "";
           });
         case "dong":
           return produce(state, (draft) => {
-            if (value === "") {
-              draft.address.dong = "";
-            } else {
-              draft.address[name] = value;
-            }
+            if (value === "") draft.address.dong = "";
+            else draft.address[name] = value;
+
             draft.address.detail = "";
           });
         default:
@@ -175,10 +168,15 @@ const position = handleActions(
           item: action.payload.item,
         };
 
-        draft.marker.markerList.map((i) => {
+        draft.marker.markerList.forEach((i) => {
           if (curr.id && i.id === curr.id) {
             i.marker.setMap(null);
-            i.marker = getMarker(draft.map, curr.y, curr.x, icons.mask);
+            i.marker = getMarker(
+              draft.map,
+              curr.y,
+              curr.x,
+              icons[draft.mode.toLowerCase()]
+            );
             i.marker.setMap(draft.map);
             draft.map = i.marker.getMap();
             setMarkerInfo(draft.mode, curr.item, i.marker, draft.map);
@@ -189,7 +187,7 @@ const position = handleActions(
               draft.map,
               newCurr.y,
               newCurr.x,
-              icons.curr_mask
+              icons["curr_" + draft.mode.toLowerCase()]
             );
             i.marker.setMap(draft.map);
             draft.map = i.marker.getMap();
@@ -220,8 +218,14 @@ const position = handleActions(
     [UPDATE_MODE]: (state, action) =>
       produce(state, (draft) => {
         draft.mode = action.payload.mode;
-        // draft.marker.currMarker = null;
+        draft.marker.currMarker = {
+          id: null,
+          y: null,
+          x: null,
+          item: null,
+        };
         draft.marker.markerList = [];
+        draft.items = null;
       }),
 
     [GET_LATLNG]: (state) =>

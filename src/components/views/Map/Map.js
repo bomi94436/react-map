@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { setMap } from "modules/position";
@@ -17,7 +17,7 @@ const Map = ({ mode, location, setMap }) => {
       level: 4,
     };
     (() => setMap({ container, options }))();
-  }, [mode]);
+  }, [mode, location.lat, location.lng, setMap]);
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
