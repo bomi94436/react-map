@@ -39,7 +39,6 @@ export const setMarkerInfo = (mode, item, marker, map) => {
     }
     customOverlay.setMap(map);
     activeId = id;
-    // this.removeEventListener("mouseover", arguments.callee);
   };
 
   const mouseOutHandler = () => {
@@ -76,12 +75,13 @@ export const getMaskCount = (remain_stat) => {
   }
 };
 
-export const getMarker = (map, y, x, iconImg) => {
+export const getMarker = (map, y, x, iconImg, bounds) => {
   const position = new window.kakao.maps.LatLng(y, x);
   const icon = new window.kakao.maps.MarkerImage(
     iconImg,
     new window.kakao.maps.Size(40, 48)
   );
+  bounds.extend(position);
 
   return new window.kakao.maps.Marker({
     map: map,

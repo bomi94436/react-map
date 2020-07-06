@@ -21,7 +21,9 @@ const Map = ({ mode, location, setMap }) => {
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <MapBlock id="map"></MapBlock>
+      <MapBlock id="map">
+        {/* <div style={{ fontSize: "10rem" }}>hi</div> */}
+      </MapBlock>
     </div>
   );
 };

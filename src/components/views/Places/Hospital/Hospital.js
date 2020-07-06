@@ -12,6 +12,7 @@ import icons from "utils/importIcons";
 import { getMarker } from "../placeUtils";
 
 const Hospital = ({
+  bounds,
   items,
   loading,
   location,
@@ -41,7 +42,7 @@ const Hospital = ({
 
   if (items) {
     items.forEach((item) => {
-      const marker = getMarker(map, item.y, item.x, icons.hospital);
+      const marker = getMarker(map, item.y, item.x, icons.hospital, bounds);
       setMarker({ id: item.id, marker: marker, item: item });
     });
   }
@@ -76,6 +77,7 @@ const Hospital = ({
 
 export default connect(
   ({ position }) => ({
+    bounds: position.bounds,
     items: position.items,
     loading: position.loading.GET_PLACE,
     location: position.location,

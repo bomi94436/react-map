@@ -11,7 +11,6 @@ const SET_MARKER = "position/SET_MARKER";
 const SET_CURR_MARKER = "position/SET_CURR_MARKER";
 const SET_CENTER_LIST_CLICK = "position/SET_CENTER_LIST_CLICK";
 
-const UPDATE_MAP = "position/UPDATE_MAP";
 const UPDATE_MODE = "position/UPDATE_MODE";
 
 const GET_LATLNG = "position/GET_LATLNG";
@@ -32,7 +31,6 @@ export const setCenterListClick = createAction(
   (data) => data
 );
 
-export const updateMap = createAction(UPDATE_MAP, (data) => data);
 export const updateMode = createAction(UPDATE_MODE, (data) => data);
 
 export const getLatLng = (si, gu, dong, detail) => async (dispatch) => {
@@ -78,12 +76,12 @@ export const getPlaces = (mode, lat, lng, option) => async (dispatch) => {
 
 // initial state
 const initState = {
-  mode: "PHARMACY",
+  mode: "",
   loading: { GET_LATLNG: false, GET_PLACE: false },
 
   map: null,
   location: { lat: 35.1798200522868, lng: 129.075087492149 },
-  address: { si: "부산광역시", gu: "", dong: "", detail: "" },
+  address: { si: "부산광역시", gu: "연제구", dong: "", detail: "" },
 
   items: null,
   marker: {
@@ -95,6 +93,7 @@ const initState = {
     },
     markerList: [],
   },
+  bounds: null,
 };
 
 const position = handleActions(
@@ -149,13 +148,12 @@ const position = handleActions(
         const marker = action.payload.marker;
 
         marker.setMap(draft.map);
-        draft.map = marker.getMap();
-
         draft.marker.markerList.push({
           id: action.payload.id,
           marker: marker,
         });
         setMarkerInfo(draft.mode, item, marker, draft.map);
+        draft.map.setBounds(draft.bounds);
       }),
 
     [SET_CURR_MARKER]: (state, action) =>
@@ -178,7 +176,6 @@ const position = handleActions(
               icons[draft.mode.toLowerCase()]
             );
             i.marker.setMap(draft.map);
-            draft.map = i.marker.getMap();
             setMarkerInfo(draft.mode, curr.item, i.marker, draft.map);
           }
           if (i.id === newCurr.id) {
@@ -190,7 +187,6 @@ const position = handleActions(
               icons["curr_" + draft.mode.toLowerCase()]
             );
             i.marker.setMap(draft.map);
-            draft.map = i.marker.getMap();
             setMarkerInfo(draft.mode, newCurr.item, i.marker, draft.map);
           }
         });
@@ -210,11 +206,6 @@ const position = handleActions(
         draft.map.panTo(coords);
       }),
 
-    [UPDATE_MAP]: (state, action) =>
-      produce(state, (draft) => {
-        draft.map = action.payload.map;
-      }),
-
     [UPDATE_MODE]: (state, action) =>
       produce(state, (draft) => {
         draft.mode = action.payload.mode;
@@ -226,6 +217,7 @@ const position = handleActions(
         };
         draft.marker.markerList = [];
         draft.items = null;
+        draft.bounds = new window.kakao.maps.LatLngBounds();
       }),
 
     [GET_LATLNG]: (state) =>
