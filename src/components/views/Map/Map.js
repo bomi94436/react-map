@@ -2,28 +2,41 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { setMap } from "modules/position";
+import "./Map.css";
 
-const MapBlock = styled.div`
-  width: 30rem;
-  height: 30rem;
-  border-radius: 0.5rem;
+const OptionButtonBlock = styled.div`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1;
 `;
 
 const Map = ({ mode, location, setMap }) => {
   useEffect(() => {
-    let container = document.getElementById("map");
-    let options = {
+    let mapCover = document.getElementById("map-cover");
+    let container = document.createElement("div");
+    container.setAttribute("class", "map");
+    mapCover.appendChild(container);
+    const options = {
       center: new window.kakao.maps.LatLng(location.lat, location.lng),
       level: 4,
     };
-    (() => setMap({ container, options }))();
+    setMap({ container, options, mapCover });
   }, [mode, location.lat, location.lng, setMap]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <MapBlock id="map">
-        {/* <div style={{ fontSize: "10rem" }}>hi</div> */}
-      </MapBlock>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        flexFlow: "column wrap",
+        position: "relative",
+      }}
+    >
+      <div id="map-cover" />
+      <OptionButtonBlock>
+        <button type="button">plus</button>
+      </OptionButtonBlock>
     </div>
   );
 };

@@ -43,7 +43,7 @@ export const setMarkerInfo = (mode, item, marker, map) => {
 
   const mouseOutHandler = () => {
     timeoutId = window.setTimeout(function () {
-      customOverlay.setMap(null);
+      customOverlay.setMap();
       activeId = null;
       timeoutId = null;
     }, 25);

@@ -80,6 +80,10 @@ const initState = {
   loading: { GET_LATLNG: false, GET_PLACE: false },
 
   map: null,
+  mapContainer: {
+    mapCover: null,
+    map: null,
+  },
   location: { lat: 35.1798200522868, lng: 129.075087492149 },
   address: { si: "부산광역시", gu: "연제구", dong: "", detail: "" },
 
@@ -140,6 +144,10 @@ const position = handleActions(
           action.payload.container,
           action.payload.options
         );
+        console.log(action.payload.container);
+        draft.mapContainer.mapCover = action.payload.mapCover;
+        draft.mapContainer.map = action.payload.container;
+        console.log(draft.mapContainer.map);
       }),
 
     [SET_MARKER]: (state, action) =>
@@ -218,6 +226,7 @@ const position = handleActions(
         draft.marker.markerList = [];
         draft.items = null;
         draft.bounds = new window.kakao.maps.LatLngBounds();
+        draft.mapContainer.mapCover.removeChild(draft.mapContainer.map);
       }),
 
     [GET_LATLNG]: (state) =>
