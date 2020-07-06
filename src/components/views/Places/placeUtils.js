@@ -75,13 +75,12 @@ export const getMaskCount = (remain_stat) => {
   }
 };
 
-export const getMarker = (map, y, x, iconImg, bounds) => {
+export const getMarker = (map, y, x, iconImg) => {
   const position = new window.kakao.maps.LatLng(y, x);
   const icon = new window.kakao.maps.MarkerImage(
     iconImg,
     new window.kakao.maps.Size(40, 48)
   );
-  bounds.extend(position);
 
   return new window.kakao.maps.Marker({
     map: map,

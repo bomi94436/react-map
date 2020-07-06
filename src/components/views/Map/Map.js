@@ -1,15 +1,8 @@
 import React, { useEffect } from "react";
-import styled from "styled-components";
 import { connect } from "react-redux";
 import { setMap } from "modules/position";
 import "./Map.css";
-
-const OptionButtonBlock = styled.div`
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  z-index: 1;
-`;
+import MapOptionButton from "./MapOptionButton";
 
 const Map = ({ mode, location, setMap }) => {
   useEffect(() => {
@@ -19,7 +12,7 @@ const Map = ({ mode, location, setMap }) => {
     mapCover.appendChild(container);
     const options = {
       center: new window.kakao.maps.LatLng(location.lat, location.lng),
-      level: 4,
+      level: 5,
     };
     setMap({ container, options, mapCover });
   }, [mode, location.lat, location.lng, setMap]);
@@ -34,9 +27,7 @@ const Map = ({ mode, location, setMap }) => {
       }}
     >
       <div id="map-cover" />
-      <OptionButtonBlock>
-        <button type="button">plus</button>
-      </OptionButtonBlock>
+      <MapOptionButton />
     </div>
   );
 };

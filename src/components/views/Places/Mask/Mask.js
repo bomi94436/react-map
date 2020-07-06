@@ -13,7 +13,6 @@ import "../Places.css";
 import { getMaskCount, getMarker } from "../placeUtils";
 
 const Mask = ({
-  bounds,
   items,
   loading,
   location,
@@ -43,7 +42,7 @@ const Mask = ({
 
   if (items) {
     items.forEach((item) => {
-      const marker = getMarker(map, item.lat, item.lng, icons.mask, bounds);
+      const marker = getMarker(map, item.lat, item.lng, icons.mask);
       setMarker({ id: item.code, marker: marker, item: item });
     });
   }
@@ -84,7 +83,6 @@ const Mask = ({
 
 export default connect(
   ({ position }) => ({
-    bounds: position.bounds,
     items: position.items,
     loading: position.loading.GET_PLACE,
     location: position.location,

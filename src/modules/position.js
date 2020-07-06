@@ -7,9 +7,11 @@ import { getMarker, setMarkerInfo } from "components/views/Places/placeUtils";
 // action type definition
 const SET_ADDRESS = "position/SET_ADDRESS";
 const SET_MAP = "position/SET_MAP";
+const SET_MAP_LEVEL = "position/SET_MAP_LEVEL";
 const SET_MARKER = "position/SET_MARKER";
 const SET_CURR_MARKER = "position/SET_CURR_MARKER";
 const SET_CENTER_LIST_CLICK = "position/SET_CENTER_LIST_CLICK";
+const SET_CENTER_PIN_CLICK = "position/SET_CENTER_PIN_CLICK";
 
 const UPDATE_MODE = "position/UPDATE_MODE";
 
@@ -24,12 +26,14 @@ const GET_PLACE_FAILURE = "position/GET_PLACE_FAILURE";
 // action generator definition
 export const setAddress = createAction(SET_ADDRESS, (data) => data);
 export const setMap = createAction(SET_MAP, (data) => data);
+export const setMapLevel = createAction(SET_MAP_LEVEL, (data) => data);
 export const setMarker = createAction(SET_MARKER, (data) => data);
 export const setCurrMarker = createAction(SET_CURR_MARKER, (data) => data);
 export const setCenterListClick = createAction(
   SET_CENTER_LIST_CLICK,
   (data) => data
 );
+export const setCenterPinClick = createAction(SET_CENTER_PIN_CLICK);
 
 export const updateMode = createAction(UPDATE_MODE, (data) => data);
 
@@ -97,7 +101,6 @@ const initState = {
     },
     markerList: [],
   },
-  bounds: null,
 };
 
 const position = handleActions(
@@ -140,14 +143,39 @@ const position = handleActions(
 
     [SET_MAP]: (state, action) =>
       produce(state, (draft) => {
+        // initial about map, etc ...
+        draft.marker.currMarker = {
+          id: null,
+          y: null,
+          x: null,
+          item: null,
+        };
+        draft.marker.markerList = [];
+        draft.items = null;
+        if (draft.mapContainer.mapCover)
+          draft.mapContainer.mapCover.removeChild(draft.mapContainer.map);
+
         draft.map = new window.kakao.maps.Map(
           action.payload.container,
           action.payload.options
         );
-        console.log(action.payload.container);
         draft.mapContainer.mapCover = action.payload.mapCover;
         draft.mapContainer.map = action.payload.container;
-        console.log(draft.mapContainer.map);
+      }),
+
+    [SET_MAP_LEVEL]: (state, action) =>
+      produce(state, (draft) => {
+        const level = draft.map.getLevel();
+        switch (action.payload.level) {
+          case "plus":
+            draft.map.setLevel(level + 1);
+            break;
+          case "minus":
+            draft.map.setLevel(level - 1);
+            break;
+          default:
+            break;
+        }
       }),
 
     [SET_MARKER]: (state, action) =>
@@ -161,7 +189,6 @@ const position = handleActions(
           marker: marker,
         });
         setMarkerInfo(draft.mode, item, marker, draft.map);
-        draft.map.setBounds(draft.bounds);
       }),
 
     [SET_CURR_MARKER]: (state, action) =>
@@ -214,19 +241,16 @@ const position = handleActions(
         draft.map.panTo(coords);
       }),
 
+    [SET_CENTER_PIN_CLICK]: (state) =>
+      produce(state, (draft) => {
+        const center = draft.map.getCenter();
+        draft.location.lat = center.getLat();
+        draft.location.lng = center.getLng();
+      }),
+
     [UPDATE_MODE]: (state, action) =>
       produce(state, (draft) => {
         draft.mode = action.payload.mode;
-        draft.marker.currMarker = {
-          id: null,
-          y: null,
-          x: null,
-          item: null,
-        };
-        draft.marker.markerList = [];
-        draft.items = null;
-        draft.bounds = new window.kakao.maps.LatLngBounds();
-        draft.mapContainer.mapCover.removeChild(draft.mapContainer.map);
       }),
 
     [GET_LATLNG]: (state) =>

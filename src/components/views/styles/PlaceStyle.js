@@ -15,7 +15,7 @@ export const ListCover = styled.div`
 `;
 
 export const List = styled.div`
-  height: 35rem;
+  height: 38rem;
   width: 20rem;
   overflow: hidden;
   overflow-y: scroll;

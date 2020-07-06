@@ -12,7 +12,6 @@ import icons from "utils/importIcons";
 import { getMarker } from "../placeUtils";
 
 const Pharmacy = ({
-  bounds,
   items,
   loading,
   location,
@@ -42,7 +41,7 @@ const Pharmacy = ({
 
   if (items) {
     items.forEach((item) => {
-      const marker = getMarker(map, item.y, item.x, icons.pharmacy, bounds);
+      const marker = getMarker(map, item.y, item.x, icons.pharmacy);
       setMarker({ id: item.id, marker: marker, item: item });
     });
   }
@@ -78,7 +77,6 @@ const Pharmacy = ({
 
 export default connect(
   ({ position }) => ({
-    bounds: position.bounds,
     items: position.items,
     loading: position.loading.GET_PLACE,
     location: position.location,
