@@ -35,10 +35,10 @@ export const setCenterListClick = createAction(
 export const updateMap = createAction(UPDATE_MAP, (data) => data);
 export const updateMode = createAction(UPDATE_MODE, (data) => data);
 
-export const getLatLng = (si, gu, dong) => async (dispatch) => {
+export const getLatLng = (si, gu, dong, detail) => async (dispatch) => {
   dispatch({ type: GET_LATLNG });
   try {
-    const response = await api.getLatLng(si, gu, dong);
+    const response = await api.getLatLng(si, gu, dong, detail);
     dispatch({
       type: GET_LATLNG_SUCCESS,
       payload: {
@@ -47,8 +47,8 @@ export const getLatLng = (si, gu, dong) => async (dispatch) => {
       },
     });
   } catch (e) {
+    alert("찾으시는 주소가 없습니다.\n다시 입력해주세요!");
     dispatch({ type: GET_LATLNG_FAILURE, payload: e, error: true });
-    throw e;
   }
 };
 

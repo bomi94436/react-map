@@ -30,7 +30,11 @@ const Mask = ({
   }, [location.lat, location.lng, updateMode, getPlaces]);
 
   if (loading) {
-    return <div>로딩중 . . .</div>;
+    return (
+      <ListCover>
+        <List>로딩중 . . .</List>
+      </ListCover>
+    );
   }
   if (!items) {
     return <div>error</div>;

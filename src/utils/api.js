@@ -6,9 +6,9 @@ export const getMask = (lat, lng, m) =>
   axios.get(`${MASK_URL}?lat=${lat}&lng=${lng}&m=${m}`);
 
 // 주소 -> 좌표 검색
-export const getLatLng = (si, gu, dong) =>
+export const getLatLng = (si, gu, dong, detail) =>
   axios.get(
-    `https://dapi.kakao.com/v2/local/search/address.json?query=${si} ${gu} ${dong}`,
+    `https://dapi.kakao.com/v2/local/search/address.json?query=${si} ${gu} ${dong} ${detail}`,
     {
       headers: {
         Authorization: `KakaoAK ${KAKAO_MAP_REST_API_KEY}`,

@@ -19,8 +19,14 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <div style={{ display: "flex", flexFlow: "row wrap" }}>
-          <Block style={{ marginRight: "5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            flexFlow: "row wrap",
+            justifyContent: "center",
+          }}
+        >
+          <Block style={{ marginRight: "2rem" }}>
             <NavBar />
             <SearchAddress />
             <Map />
