@@ -83,7 +83,8 @@ const places = handleActions(
               draft.map,
               curr.y,
               curr.x,
-              icons[draft.mode.toLowerCase()]
+              icons[draft.mode.toLowerCase()],
+              curr.id
             );
             i.marker.setMap(draft.map);
             setMarkerInfo(draft.mode, curr.item, i.marker, draft.map);
@@ -94,7 +95,8 @@ const places = handleActions(
               draft.map,
               newCurr.y,
               newCurr.x,
-              icons["curr_" + draft.mode.toLowerCase()]
+              icons["curr_" + draft.mode.toLowerCase()],
+              newCurr.id
             );
             i.marker.setMap(draft.map);
             setMarkerInfo(draft.mode, newCurr.item, i.marker, draft.map);

@@ -1,4 +1,6 @@
 /* global kakao */
+import Scroll from "react-scroll";
+
 export const setMarkerInfo = (mode, item, marker, map) => {
   const content = document.createElement("div");
   const id = mode === "MASK" ? item.code : item.id;
@@ -55,11 +57,6 @@ export const setMarkerInfo = (mode, item, marker, map) => {
   content.addEventListener("mouseout", mouseOutHandler);
 };
 
-// export const removeMarkerInfo = (marker) => {
-//   kakao.maps.event.removeListener(marker, "mouseover");
-//   kakao.maps.event.addListener(marker, "mouseout", mouseOutHandler);
-// }
-
 export const getMaskCount = (remain_stat) => {
   switch (remain_stat) {
     case "plenty":
@@ -75,17 +72,32 @@ export const getMaskCount = (remain_stat) => {
   }
 };
 
-export const getMarker = (map, y, x, iconImg) => {
+export const getMarker = (map, y, x, iconImg, id) => {
   const position = new window.kakao.maps.LatLng(y, x);
   const icon = new window.kakao.maps.MarkerImage(
     iconImg,
     new window.kakao.maps.Size(40, 48)
   );
+  let scroller = Scroll.scroller;
 
-  return new window.kakao.maps.Marker({
+  const mouseClickHandler = () => {
+    scroller.scrollTo(id, {
+      duration: 1200,
+      delay: 100,
+      smooth: true,
+      containerId: "list",
+      offset: -5,
+    });
+  };
+
+  const marker = new window.kakao.maps.Marker({
     map: map,
     position: position,
     clickable: true,
     image: icon,
   });
+
+  kakao.maps.event.addListener(marker, "click", mouseClickHandler);
+
+  return marker;
 };

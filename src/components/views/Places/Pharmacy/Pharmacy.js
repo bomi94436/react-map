@@ -11,6 +11,7 @@ import {
 } from "modules/places";
 import icons from "utils/importIcons";
 import { getMarker } from "../placeUtils";
+import Scroll from "react-scroll";
 
 const Pharmacy = ({
   items,
@@ -29,6 +30,8 @@ const Pharmacy = ({
     getPlaces("PHARMACY", location.lat, location.lng, "PM9");
   }, [location.lat, location.lng, updateMode, getPlaces]);
 
+  let Element = Scroll.Element;
+
   if (loading) {
     return (
       <ListCover>
@@ -42,7 +45,7 @@ const Pharmacy = ({
 
   if (items) {
     items.forEach((item) => {
-      const marker = getMarker(map, item.y, item.x, icons.pharmacy);
+      const marker = getMarker(map, item.y, item.x, icons.pharmacy, item.id);
       setMarker({ id: item.id, marker: marker, item: item });
     });
   }
@@ -50,25 +53,27 @@ const Pharmacy = ({
   return (
     <ListCover>
       <span>약국 검색</span>
-      <List>
+      <List id="list">
         {items.map((item, index) => {
           return (
-            <ListItem
-              key={index}
-              onClick={() => {
-                setCenterListClick({ y: item.y, x: item.x });
-                setCurrMarker({
-                  id: item.id,
-                  y: item.y,
-                  x: item.x,
-                  item: item,
-                });
-              }}
-            >
-              <h3>{item.place_name}</h3>
-              <p>{item.road_address_name}</p>
-              <p>{item.category_name}</p>
-            </ListItem>
+            <Element name={item.id}>
+              <ListItem
+                key={index}
+                onClick={() => {
+                  setCenterListClick({ y: item.y, x: item.x });
+                  setCurrMarker({
+                    id: item.id,
+                    y: item.y,
+                    x: item.x,
+                    item: item,
+                  });
+                }}
+              >
+                <h3>{item.place_name}</h3>
+                <p>{item.road_address_name}</p>
+                <p>{item.category_name}</p>
+              </ListItem>
+            </Element>
           );
         })}
       </List>

@@ -11,6 +11,7 @@ import {
 import icons from "utils/importIcons";
 import "../Places.css";
 import { getMaskCount, getMarker } from "../placeUtils";
+import Scroll from "react-scroll";
 
 const Mask = ({
   items,
@@ -29,6 +30,8 @@ const Mask = ({
     getPlaces("MASK", location.lat, location.lng, 2000);
   }, [location.lat, location.lng, updateMode, getPlaces]);
 
+  let Element = Scroll.Element;
+
   if (loading) {
     return (
       <ListCover>
@@ -42,7 +45,7 @@ const Mask = ({
 
   if (items) {
     items.forEach((item) => {
-      const marker = getMarker(map, item.lat, item.lng, icons.mask);
+      const marker = getMarker(map, item.lat, item.lng, icons.mask, item.code);
       setMarker({ id: item.code, marker: marker, item: item });
     });
   }
@@ -50,30 +53,33 @@ const Mask = ({
   return (
     <ListCover>
       <span>마스크 판매처 검색</span>
-      <List key={"MASK"}>
+      <List id="list">
         {items.map((item, index) => {
           return (
-            <ListItem
-              key={index}
-              onClick={() => {
-                setCenterListClick({ y: item.lat, x: item.lng });
-                setCurrMarker({
-                  id: item.code,
-                  y: item.lat,
-                  x: item.lng,
-                  item: item,
-                });
-              }}
-              textColor={item.remain_stat}
-            >
-              <h3>{item.name}</h3>
-              <h5 style={{ margin: "0.2rem" }}>
-                {getMaskCount(item.remain_stat)}
-              </h5>
-              <p>{item.addr}</p>
-              <p>데이터 생성일: {item.created_at}</p>
-              <p>입고시간: {item.stock_at}</p>
-            </ListItem>
+            <Element name={item.code}>
+              <ListItem
+                key={index}
+                onClick={() => {
+                  setCenterListClick({ y: item.lat, x: item.lng });
+                  setCurrMarker({
+                    id: item.code,
+                    y: item.lat,
+                    x: item.lng,
+                    item: item,
+                  });
+                }}
+                textColor={item.remain_stat}
+                id={item.code}
+              >
+                <h3>{item.name}</h3>
+                <h5 style={{ margin: "0.2rem" }}>
+                  {getMaskCount(item.remain_stat)}
+                </h5>
+                <p>{item.addr}</p>
+                <p>데이터 생성일: {item.created_at}</p>
+                <p>입고시간: {item.stock_at}</p>
+              </ListItem>
+            </Element>
           );
         })}
       </List>

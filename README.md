@@ -1,6 +1,6 @@
 # React report - Map application implementation using api
 
-### development environment
+## development environment
 
 - create-react-app 3.4.1
 - react-redux
@@ -10,7 +10,7 @@
 - [kakao map api](https://apis.map.kakao.com/)
 - vscode <br>
 
-### contents
+## contents
 
-Search for hospitals, pharmacies, and mask sales locations in Korea.
-You can test it [here](https://bomi94436.github.io/react-map/)!
+Search for hospitals, pharmacies, and mask sales locations in Korea.<br>
+You can test it [_here_](https://bomi94436.github.io/react-map/)!
