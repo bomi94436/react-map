@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { ListCover, List, ListItem } from "components/views/styles/PlaceStyle";
+import {} from "modules/position";
 import {
-  setCenterListClick,
-  updateMode,
   setMarker,
   setCurrMarker,
+  setCenterListClick,
+  updateMode,
   getPlaces,
-} from "modules/position";
+} from "modules/places";
 import icons from "utils/importIcons";
 import { getMarker } from "../placeUtils";
 
@@ -76,11 +77,11 @@ const Pharmacy = ({
 };
 
 export default connect(
-  ({ position }) => ({
-    items: position.items,
-    loading: position.loading.GET_PLACE,
-    location: position.location,
-    map: position.map,
+  (state) => ({
+    items: state.items,
+    loading: state.loading.GET_PLACE,
+    location: state.location,
+    map: state.map,
   }),
   (dispatch) => ({
     getPlaces: (mode, lat, lng, meter) =>

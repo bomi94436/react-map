@@ -144,8 +144,8 @@ const SearchAddress = ({ address, setAddress, getLatLng }) => {
 };
 
 export default connect(
-  ({ position }) => ({
-    address: position.address,
+  (state) => ({
+    address: state.address,
   }),
   (dispatch) => ({
     setAddress: (data) => dispatch(setAddress(data)),

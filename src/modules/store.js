@@ -1,13 +1,14 @@
-import { combineReducers, createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import reduceReducers from "reduce-reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 import ReduxThunk from "redux-thunk";
 import position from "./position";
+import places from "./places";
+import initState from "./initState";
 
-const rootReducer = combineReducers({
-  position,
-});
+const reducer = reduceReducers(initState, position, places);
 
 export default createStore(
-  rootReducer,
+  reducer,
   composeWithDevTools(applyMiddleware(ReduxThunk))
 );

@@ -33,9 +33,9 @@ const Map = ({ mode, location, setMap }) => {
 };
 
 export default connect(
-  ({ position }) => ({
-    mode: position.mode,
-    location: position.location,
+  (state) => ({
+    mode: state.mode,
+    location: state.location,
   }),
   (dispatch) => ({
     setMap: (data) => dispatch(setMap(data)),
